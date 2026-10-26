@@ -1,0 +1,47 @@
+Start testing: Oct 26 00:57 +03
+----------------------------------------------------------
+1/2 Testing: icons-software
+1/2 Test: icons-software
+Command: "/private/tmp/qavsi-icons-build/tests/qavsi-icons-check"
+Directory: /private/tmp/qavsi-icons-build/tests
+"icons-software" start time: Oct 26 00:57 +03
+Output:
+----------------------------------------------------------
+Qavsi.Icons: absent:unique_missing icon unavailable; using source or missing fallback
+Qavsi.Icons: absent:another_missing icon unavailable; using source or missing fallback
+Relative source AppIcon: QVariant(QUrl, QUrl("relative.png")) native: QVariant(QUrl, QUrl("relative.png")) expected: QUrl("file:///var/folders/kk/9518brqj7d36kzht_t4tqg4c0000gn/T/qavsi-icons-check-HRnROw/relative/relative.png") ready: true context: QUrl("file:///var/folders/kk/9518brqj7d36kzht_t4tqg4c0000gn/T/qavsi-icons-check-HRnROw/relative/Fixture.qml") parentContext: QUrl("")
+Qavsi.Icons: test:missing icon unavailable; using source or missing fallback
+Qavsi.Icons: material:settings icon unavailable; using source or missing fallback
+Populating font family aliases took 38 ms. Replace uses of missing font family "Sans Serif" with one that exists to avoid this cost. 
+Qavsi Icons: assertions 89 failures 0 DPR 1
+<end of output>
+Test time =   3.85 sec
+----------------------------------------------------------
+Test Passed.
+"icons-software" end time: Oct 26 00:57 +03
+"icons-software" time elapsed: 00:00:03
+----------------------------------------------------------
+
+2/2 Testing: icons-software-dpr2
+2/2 Test: icons-software-dpr2
+Command: "/private/tmp/qavsi-icons-build/tests/qavsi-icons-check"
+Directory: /private/tmp/qavsi-icons-build/tests
+"icons-software-dpr2" start time: Oct 26 00:57 +03
+Output:
+----------------------------------------------------------
+Qavsi.Icons: absent:unique_missing icon unavailable; using source or missing fallback
+Qavsi.Icons: absent:another_missing icon unavailable; using source or missing fallback
+Relative source AppIcon: QVariant(QUrl, QUrl("relative.png")) native: QVariant(QUrl, QUrl("relative.png")) expected: QUrl("file:///var/folders/kk/9518brqj7d36kzht_t4tqg4c0000gn/T/qavsi-icons-check-jszqTa/relative/relative.png") ready: true context: QUrl("file:///var/folders/kk/9518brqj7d36kzht_t4tqg4c0000gn/T/qavsi-icons-check-jszqTa/relative/Fixture.qml") parentContext: QUrl("")
+Qavsi.Icons: test:missing icon unavailable; using source or missing fallback
+Qavsi.Icons: material:settings icon unavailable; using source or missing fallback
+Populating font family aliases took 30 ms. Replace uses of missing font family "Sans Serif" with one that exists to avoid this cost. 
+Qavsi Icons: assertions 89 failures 0 DPR 2
+<end of output>
+Test time =   0.32 sec
+----------------------------------------------------------
+Test Passed.
+"icons-software-dpr2" end time: Oct 26 00:57 +03
+"icons-software-dpr2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 26 00:57 +03

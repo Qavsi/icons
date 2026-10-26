@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.30)
+project(QavsiIconsCheck LANGUAGES CXX)
+find_package(Qt6 6.12 REQUIRED COMPONENTS Quick Test)
+qt_standard_project_setup(REQUIRES 6.12)
+
+option(QAVSI_ICONS_TEST_MATERIAL "Test the optional Material provider" ${QAVSI_ICONS_BUILD_MATERIAL})
+if(NOT TARGET QavsiIcons::Core)
+    find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Core)
+endif()
+if(QAVSI_ICONS_TEST_MATERIAL AND NOT TARGET QavsiIcons::Material)
+    find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Material)
+endif()
+qt_add_executable(qavsi-icons-check checks.cpp)
+qt_add_qml_module(qavsi-icons-check URI Qavsi.Icons.Tests
+    QML_FILES TestGlyph.qml
+    IMPORT_PATH "${QavsiIcons_QML_IMPORT_DIR}")
+target_compile_features(qavsi-icons-check PRIVATE cxx_std_20)
+target_compile_definitions(qavsi-icons-check PRIVATE
+    QAVSI_ICONS_TEST_IMPORT_PATH="${QavsiIcons_QML_IMPORT_DIR}")
+target_link_libraries(qavsi-icons-check PRIVATE Qt6::Quick Qt6::Test QavsiIcons::Core)
+if(QAVSI_ICONS_TEST_MATERIAL)
+    target_link_libraries(qavsi-icons-check PRIVATE QavsiIcons::Material)
+    target_compile_definitions(qavsi-icons-check PRIVATE QAVSI_ICONS_TEST_MATERIAL=1)
+endif()
+enable_testing()
+add_test(NAME icons-software COMMAND qavsi-icons-check)
+set_tests_properties(icons-software PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+add_test(NAME icons-software-dpr2 COMMAND qavsi-icons-check)
+set_tests_properties(icons-software-dpr2 PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software;QT_SCALE_FACTOR=2")

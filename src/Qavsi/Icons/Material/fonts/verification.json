@@ -1,0 +1,88 @@
+{
+  "repository": "https://github.com/google/material-design-icons",
+  "revision": "10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7",
+  "fontPath": "variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf",
+  "catalogPath": "variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].codepoints",
+  "licensePath": "LICENSE",
+  "licenseSha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+  "official": {
+    "fontSha256": "7e74e36533ccee12c2b81e75bfcf3ccf123d3bb7e7e46d65d94445f23db0c97c",
+    "catalogSha256": "a7404d9e5a1b63f496cf05ace45d386075886b5a7f123fba9f29527cb6006fde",
+    "fontBytes": 15235612,
+    "catalogNames": 4304,
+    "catalogUniqueCodepoints": 4004,
+    "unicodeCmapSubtables": 4,
+    "missingCatalogGlyphCount": 0,
+    "missingCatalogGlyphs": {},
+    "axes": {
+      "FILL": {
+        "minimum": 0.0,
+        "default": 0.0,
+        "maximum": 1.0
+      },
+      "GRAD": {
+        "minimum": -50.0,
+        "default": 0.0,
+        "maximum": 200.0
+      },
+      "opsz": {
+        "minimum": 20.0,
+        "default": 24.0,
+        "maximum": 48.0
+      },
+      "wght": {
+        "minimum": 100.0,
+        "default": 400.0,
+        "maximum": 700.0
+      }
+    },
+    "fontNames": {
+      "1": "Material Symbols Rounded",
+      "2": "Regular",
+      "4": "Material Symbols Rounded Regular",
+      "5": "Version 2.978",
+      "6": "MaterialSymbolsRounded-Regular"
+    }
+  },
+  "existingMerce": {
+    "fontSha256": "c2c185c2f31193348f34ae454215d990bb49f494c45e79348d9f2b3d653607d7",
+    "catalogSha256": "cb8e63e819c1172b9653b7f15fecd024ac329f7854f65e9c7dc7cc9b78d993eb",
+    "fontBytes": 15076500,
+    "catalogNames": 4271,
+    "catalogUniqueCodepoints": 3970,
+    "unicodeCmapSubtables": 4,
+    "missingCatalogGlyphCount": 0,
+    "missingCatalogGlyphs": {},
+    "axes": {
+      "FILL": {
+        "minimum": 0.0,
+        "default": 0.0,
+        "maximum": 1.0
+      },
+      "GRAD": {
+        "minimum": -50.0,
+        "default": 0.0,
+        "maximum": 200.0
+      },
+      "opsz": {
+        "minimum": 20.0,
+        "default": 24.0,
+        "maximum": 48.0
+      },
+      "wght": {
+        "minimum": 100.0,
+        "default": 400.0,
+        "maximum": 700.0
+      }
+    },
+    "fontNames": {
+      "1": "Material Symbols Rounded",
+      "2": "Regular",
+      "4": "Material Symbols Rounded Regular",
+      "5": "Version 2.963",
+      "6": "MaterialSymbolsRounded-Regular"
+    }
+  },
+  "recommendation": "Use the pinned official font+catalog+LICENSE together; existing Merce pair is coherent but older and not byte-identical to this revision.",
+  "validation": "Standard-library SFNT parser reads fvar/name and Unicode cmap4/12; every catalog codepoint resolves a nonzero glyph; no renderer/UI execution."
+}

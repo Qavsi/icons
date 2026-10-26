@@ -1,0 +1,38 @@
+{
+  "upstream": "https://github.com/google/material-design-icons",
+  "revision": "10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7",
+  "upstreamFont": "variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf",
+  "upstreamCatalog": "variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].codepoints",
+  "license": "Apache-2.0",
+  "files": {
+    "MaterialSymbolsRounded.ttf": "7e74e36533ccee12c2b81e75bfcf3ccf123d3bb7e7e46d65d94445f23db0c97c",
+    "MaterialSymbolsRounded.codepoints": "a7404d9e5a1b63f496cf05ace45d386075886b5a7f123fba9f29527cb6006fde",
+    "LICENSE": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+  },
+  "fontVersion": "2.978",
+  "names": 4304,
+  "uniqueCodepoints": 4004,
+  "verifiedCmapCoverage": 4304,
+  "axes": {
+    "FILL": [
+      0,
+      0,
+      1
+    ],
+    "GRAD": [
+      -50,
+      0,
+      200
+    ],
+    "opsz": [
+      20,
+      24,
+      48
+    ],
+    "wght": [
+      100,
+      400,
+      700
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+evidence/logs/** -whitespace
+src/Qavsi/Icons/Material/fonts/** -whitespace
