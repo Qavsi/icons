@@ -10,6 +10,7 @@ IconGlyph {
     function finiteBound(value: var, fallback: real, minimum: real, maximum: real): real {
         return typeof value === "number" && Number.isFinite(value) ? Math.max(minimum, Math.min(maximum, value)) : fallback
     }
+    readonly property real fill: finiteBound(appearance?.axes?.FILL, filled ? 1 : 0, 0, 1)
     readonly property int weight: finiteBound(appearance?.weight, 400, 100, 700)
     readonly property real opticalSize: finiteBound(appearance?.opticalSize, 24, 20, 48)
     readonly property int grade: finiteBound(appearance?.grade, 0, -50, 200)
@@ -27,7 +28,7 @@ IconGlyph {
         font.family: MaterialSymbols.family
         font.pixelSize: root.finiteBound(root.size, 1, 1, 4096)
         font.weight: root.weight
-        font.variableAxes: ({ "FILL": root.filled ? 1 : 0, "wght": root.weight,
+        font.variableAxes: ({ "FILL": root.fill, "wght": root.weight,
             "opsz": root.opticalSize, "GRAD": root.grade })
         renderType: root.GraphicsInfo.api === GraphicsInfo.Software && root.requestedRenderType === Text.CurveRendering
             ? Text.QtRendering : root.requestedRenderType

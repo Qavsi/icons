@@ -19,7 +19,10 @@ AppIcon {
 Material3 style owns the selected/FILL policy; AppIcon forwards only the
 requested state. A generic appearance object/map may provide provider-specific
 weight/grade/opticalSize/renderType. Material defaults are 400/0/24/CurveRendering;
-software uses QtRendering. Font/catalog/licenses are owned only by Material.
+software uses QtRendering. Optional `appearance.axes.FILL` accepts a finite numeric
+value clamped to 0..1; absent or invalid values retain `filled`'s 0/1 behavior.
+Use a QtObject for live appearance bindings, or replace a JS map to notify changes.
+Font/catalog/licenses are owned only by Material.
 There are no font-family or token defaults in Core.
 
 Source: add_subdirectory(path/to/icons icons), link QavsiIcons::Core and the

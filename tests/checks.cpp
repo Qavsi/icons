@@ -320,6 +320,27 @@ int main(int argc, char **argv)
     const auto starFilled = capture(late.get());
     expect(differentPixels(starOutline, starFilled) > 20 && alphaPixels(starFilled) > alphaPixels(starOutline),
            QStringLiteral("FILL changes star glyph pixels without choosing another asset"));
+    const auto fillWarnings = warningMessages.size();
+    auto fillAppearance = create(first, R"(
+        import QtQml
+        QtObject { property var axes: ({ "FILL": 0.5 }) })");
+    if (!fillAppearance) return 2;
+    late->setProperty("iconAppearance", QVariant::fromValue(fillAppearance.get()));
+    const auto fractional = capture(late.get());
+    expect(differentPixels(fractional, starOutline) > 20 && differentPixels(fractional, starFilled) > 20,
+           QStringLiteral("public appearance FILL0.5 renders a glyph distinct from both filled endpoints"));
+    fillAppearance->setProperty("axes", QVariantMap{{QStringLiteral("FILL"), std::numeric_limits<double>::quiet_NaN()}});
+    expect(differentPixels(capture(late.get()), starFilled) == 0,
+           QStringLiteral("non-finite appearance FILL falls back to the caller's filled state"));
+    square->setProperty("iconAppearance", QVariant::fromValue(fillAppearance.get()));
+    expect(differentPixels(capture(square.get()), green) == 0 && warningMessages.size() == fillWarnings,
+           QStringLiteral("invalid Material appearance data does not change another provider or emit warnings"));
+    fillAppearance->setProperty("axes", QVariantMap{});
+    late->setProperty("iconFilled", false);
+    expect(differentPixels(capture(late.get()), starOutline) == 0,
+           QStringLiteral("absent appearance FILL preserves the caller's unfilled glyph"));
+    late->setProperty("iconAppearance", QVariant::fromValue<QObject *>(nullptr));
+    late->setProperty("iconFilled", true);
     auto badAppearance = create(first, R"(
         import QtQml
         QtObject {
