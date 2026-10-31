@@ -44,3 +44,13 @@ The official Rounded2.978 font/catalog is pinned to Google10ecc147,4304 names;
 all 4004 unique codepoints map to nonzero font glyphs. Source bytes are unchanged.
 A zero or non-finite icon size collapses the font glyph; it never selects QFont's
 implicit default size. Invalid appearance values use the provider defaults.
+
+Default wght400/opsz24/GRAD0 FILL0/1 use full-catalog static instances of that
+same pinned font, with overlapping contours removed and unique family names.
+This avoids cracks in Qt 6.12 Metal text rendering without changing CurveRendering
+or its software QtRendering fallback. Fractional FILL and custom axes still use
+the original variable font. Core/package routing and caller appearance remain
+unchanged. Endpoint assets add about 3.1 MiB to optional Material, nothing to Core.
+`fonts/instances.json` records hashes, axes, tools and verified catalog coverage;
+`tools/generate-material-instances.py` is offline asset preparation, not a build
+or runtime dependency.

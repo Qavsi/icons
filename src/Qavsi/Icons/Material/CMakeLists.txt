@@ -9,6 +9,8 @@ qt_add_qml_module(${module_target} SHARED
     SOURCES materialsymbols.h materialsymbols.cpp
     QML_FILES MaterialGlyph.qml
     RESOURCES fonts/MaterialSymbolsRounded.ttf fonts/MaterialSymbolsRounded.codepoints
+        fonts/MaterialSymbolsRoundedOutline.ttf fonts/MaterialSymbolsRoundedFilled.ttf
+        fonts/instances.json
         fonts/LICENSE fonts/provenance.json
     OUTPUT_TARGETS module_auxiliary_targets)
 target_sources(${module_target}Plugin PRIVATE materialplugin.cpp)
@@ -20,5 +22,5 @@ target_compile_features(${module_target} PUBLIC cxx_std_20)
 target_link_libraries(${module_target} PUBLIC QavsiIcons::Core PRIVATE Qt6::Quick)
 add_library(QavsiIcons::Material ALIAS ${module_target})
 include("${PROJECT_SOURCE_DIR}/cmake/InstallQmlModule.cmake")
-install(FILES fonts/LICENSE fonts/provenance.json
+install(FILES fonts/LICENSE fonts/provenance.json fonts/instances.json
     DESTINATION "${CMAKE_INSTALL_DATADIR}/licenses/QavsiIcons/Material")

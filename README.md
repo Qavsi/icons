@@ -47,3 +47,24 @@ No QObject is shared between engines. Qt owns one immutable font registration.
 Tests and remaining limits are recorded in DESIGN.md. No SF/FontAwesome
 provider, mapping table, downloading, control wrapper or global QIcon theme
 mutation is included in this slice.
+
+### Material font endpoints
+
+Material uses clean full-catalog static instances at the default 400/24/GRAD0
+FILL0/1 endpoints. Fractional FILL and custom axes retain the original variable
+font. This keeps CurveRendering on RHI and QtRendering on software. The optional
+provider includes about 3.1 MiB of derived endpoint assets; Core is unchanged.
+
+The committed assets need no generator at build/runtime. To regenerate from the
+pinned upstream source:
+
+```sh
+python3 -m venv build/font-tools
+build/font-tools/bin/python -m pip install fonttools==4.60.1 skia-pathops==0.8.0.post2
+build/font-tools/bin/python tools/generate-material-instances.py
+```
+
+The generator removes overlapping contours, preserves all 4304 catalog names and
+records output hashes in `fonts/instances.json`. See
+[FontTools instancing](https://fonttools.readthedocs.io/en/latest/varLib/instancer.html)
+for the overlap handling used for these assets.

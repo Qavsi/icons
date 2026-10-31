@@ -1,0 +1,41 @@
+{
+  "source": "MaterialSymbolsRounded.ttf",
+  "sourceSha256": "7e74e36533ccee12c2b81e75bfcf3ccf123d3bb7e7e46d65d94445f23db0c97c",
+  "upstreamRevision": "10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7",
+  "license": "Apache-2.0",
+  "fonttools": "4.60.1",
+  "skiaPathops": "0.8.0.post2",
+  "transforms": [
+    "pin all axes",
+    "remove overlapping contours",
+    "unique family names"
+  ],
+  "instances": [
+    {
+      "file": "MaterialSymbolsRoundedOutline.ttf",
+      "family": "Qavsi Material Symbols Rounded Outline",
+      "axes": {
+        "FILL": 0,
+        "wght": 400,
+        "opsz": 24,
+        "GRAD": 0
+      },
+      "sha256": "08e67afe1a8fb042eab64481ea27de140d44b8da266538f20c6c9730a389b7c9",
+      "bytes": 1667036,
+      "verifiedCatalogNames": 4304
+    },
+    {
+      "file": "MaterialSymbolsRoundedFilled.ttf",
+      "family": "Qavsi Material Symbols Rounded Filled",
+      "axes": {
+        "FILL": 1,
+        "wght": 400,
+        "opsz": 24,
+        "GRAD": 0
+      },
+      "sha256": "f2c15cc0e48e0aecaa940999f5207366e3a59d7c93471b5f11505aebc3edecd5",
+      "bytes": 1608044,
+      "verifiedCatalogNames": 4304
+    }
+  ]
+}

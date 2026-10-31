@@ -7,14 +7,22 @@
 namespace Qavsi::Icons::Material {
 MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
 {
-    // Qt owns the immutable font registration; no QObject crosses engine boundaries.
-    static const int fontId = QFontDatabase::addApplicationFont(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.ttf"));
-    const auto families = QFontDatabase::applicationFontFamilies(fontId);
-    if (fontId < 0 || families.isEmpty()) {
-        qWarning("Qavsi.Icons.Material: bundled font could not be registered");
-        return;
-    }
-    m_family = families.first();
+    const auto registerFont = [](const QString &file) {
+        const int id = QFontDatabase::addApplicationFont(
+            QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/") + file);
+        const auto families = QFontDatabase::applicationFontFamilies(id);
+        if (id < 0 || families.isEmpty())
+            qWarning() << "Qavsi.Icons.Material: bundled font could not be registered:" << file;
+        return families.value(0);
+    };
+    // Qt owns immutable font registrations; no QObject crosses engine boundaries.
+    static const QString variable = registerFont(QStringLiteral("MaterialSymbolsRounded.ttf"));
+    static const QString outline = registerFont(QStringLiteral("MaterialSymbolsRoundedOutline.ttf"));
+    static const QString filled = registerFont(QStringLiteral("MaterialSymbolsRoundedFilled.ttf"));
+    m_family = variable;
+    m_outlineFamily = outline;
+    m_filledFamily = filled;
+    if (m_family.isEmpty()) return;
     QFile metadata(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.codepoints"));
     if (!metadata.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("Qavsi.Icons.Material: bundled catalog could not be read");

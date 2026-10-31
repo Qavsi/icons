@@ -12,12 +12,16 @@ class MaterialSymbols : public QObject
     QML_ELEMENT
     QML_SINGLETON
     Q_PROPERTY(QString family READ family CONSTANT FINAL)
+    Q_PROPERTY(QString outlineFamily READ outlineFamily CONSTANT FINAL)
+    Q_PROPERTY(QString filledFamily READ filledFamily CONSTANT FINAL)
     Q_PROPERTY(QStringList names READ names CONSTANT FINAL)
     Q_PROPERTY(bool ready READ ready CONSTANT FINAL)
     Q_PROPERTY(int glyphCount READ glyphCount CONSTANT FINAL)
 public:
     explicit MaterialSymbols(QObject *parent = nullptr);
     QString family() const { return m_family; }
+    QString outlineFamily() const { return m_outlineFamily; }
+    QString filledFamily() const { return m_filledFamily; }
     QStringList names() const { return m_names; }
     bool ready() const { return !m_family.isEmpty() && !m_glyphs.isEmpty(); }
     int glyphCount() const { return m_glyphs.size(); }
@@ -25,6 +29,8 @@ public:
     Q_INVOKABLE bool contains(const QString &name) const { return m_glyphs.contains(name); }
 private:
     QString m_family;
+    QString m_outlineFamily;
+    QString m_filledFamily;
     QStringList m_names;
     QHash<QString, QString> m_glyphs;
 };

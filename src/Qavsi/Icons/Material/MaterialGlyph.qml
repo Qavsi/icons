@@ -14,6 +14,11 @@ IconGlyph {
     readonly property int weight: finiteBound(appearance?.weight, 400, 100, 700)
     readonly property real opticalSize: finiteBound(appearance?.opticalSize, 24, 20, 48)
     readonly property int grade: finiteBound(appearance?.grade, 0, -50, 200)
+    readonly property bool defaultAxes: weight === 400 && opticalSize === 24 && grade === 0
+    readonly property string family: defaultAxes && fill === 0
+        ? MaterialSymbols.outlineFamily || MaterialSymbols.family
+        : defaultAxes && fill === 1 ? MaterialSymbols.filledFamily || MaterialSymbols.family
+        : MaterialSymbols.family
     readonly property int requestedRenderType: appearance?.renderType === Text.QtRendering
         || appearance?.renderType === Text.NativeRendering || appearance?.renderType === Text.CurveRendering
         ? appearance.renderType : Text.CurveRendering
@@ -25,7 +30,7 @@ IconGlyph {
         visible: Number.isFinite(root.size) && root.size > 0
         text: root.status === Image.Ready ? MaterialSymbols.glyph(root.name) : ""
         color: root.color
-        font.family: MaterialSymbols.family
+        font.family: root.family
         font.pixelSize: root.finiteBound(root.size, 1, 1, 4096)
         font.weight: root.weight
         font.variableAxes: ({ "FILL": root.fill, "wght": root.weight,

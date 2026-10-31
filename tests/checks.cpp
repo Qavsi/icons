@@ -148,6 +148,26 @@ int differentPixels(const QImage &a, const QImage &b)
             count += a.pixel(x, y) != b.pixel(x, y);
     return count;
 }
+bool solidHeartBody(const QImage &image)
+{
+    QRect ink;
+    for (int y = 0; y < image.height(); ++y)
+        for (int x = 0; x < image.width(); ++x)
+            if (qAlpha(image.pixel(x, y)) > 32)
+                ink |= QRect(x, y, 1, 1);
+    if (ink.isEmpty()) return false;
+    for (int y = ink.y() + qRound(ink.height() * 0.3); y <= ink.bottom(); ++y) {
+        int left = -1, right = -1;
+        for (int x = ink.left(); x <= ink.right(); ++x)
+            if (qAlpha(image.pixel(x, y)) == 255) {
+                if (left < 0) left = x;
+                right = x;
+            }
+        for (int x = left; x >= 0 && x <= right; ++x)
+            if (qAlpha(image.pixel(x, y)) < 250) return false;
+    }
+    return true;
+}
 int matchingWarnings(const QString &name)
 {
     int count = 0;
@@ -320,6 +340,10 @@ int main(int argc, char **argv)
     const auto starFilled = capture(late.get());
     expect(differentPixels(starOutline, starFilled) > 20 && alphaPixels(starFilled) > alphaPixels(starOutline),
            QStringLiteral("FILL changes star glyph pixels without choosing another asset"));
+    late->setProperty("iconName", QStringLiteral("material:favorite"));
+    expect(solidHeartBody(capture(late.get())),
+           QStringLiteral("the filled favorite glyph has a solid interior without contour cracks"));
+    late->setProperty("iconName", QStringLiteral("material:star"));
     const auto fillWarnings = warningMessages.size();
     auto fillAppearance = create(first, R"(
         import QtQml
