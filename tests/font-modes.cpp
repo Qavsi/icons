@@ -8,9 +8,15 @@
 #include <memory>
 
 static int warnings = 0;
+static int fallbackWarnings = 0;
+static int missingWarnings = 0;
 static void handler(QtMsgType type, const QMessageLogContext &, const QString &message)
 {
-    if (type == QtWarningMsg && message.contains("material:settings")) ++warnings;
+    if (type == QtWarningMsg && message.contains("material:settings")) {
+        ++warnings;
+        if (message.contains("variable font unavailable")) ++fallbackWarnings;
+        if (message.contains("icon unavailable")) ++missingWarnings;
+    }
     fprintf(stderr, "%s\n", qPrintable(message));
 }
 int main(int argc, char **argv)
@@ -26,6 +32,10 @@ import Qavsi.Icons
 import Qavsi.Icons.Material
 Window {
     width: 64; height: 64; visible: true
+    function warnMissing() {
+        IconRegistry.warnOnce("material:settings", "icon unavailable; using source or missing fallback")
+        IconRegistry.warnOnce("material:settings", "icon unavailable; using source or missing fallback")
+    }
     AppIcon { objectName: "icon"; name: "material:settings"; size: 48; color: "black";
         appearance: QtObject { property var axes: ({ FILL: 0.5 }) } }
     AppIcon { objectName: "other"; name: "material:home"; size: 48; color: "black" }
@@ -55,6 +65,8 @@ Window {
     icon->setProperty("filled", true);
     QTest::qWait(100);
     if (warnings != 1) return 7;
+    QMetaObject::invokeMethod(window.get(), "warnMissing");
+    if (fallbackWarnings != 1 || missingWarnings != 1) return 8;
 #endif
     return 0;
 }

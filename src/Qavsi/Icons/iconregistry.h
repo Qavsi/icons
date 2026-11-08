@@ -27,6 +27,6 @@ signals:
 private:
     explicit IconRegistry(QObject *parent) : QObject(parent) {}
     QVariantMap m_packages;
-    QSet<QString> m_warned;
+    QSet<QPair<QString, QString>> m_warned;
 };
 }
