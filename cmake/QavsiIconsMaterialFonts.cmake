@@ -1,4 +1,5 @@
 include_guard(GLOBAL)
+set(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH "/qt/qml/Qavsi/Icons/Material/fonts" CACHE INTERNAL "Material font resource path")
 include("${CMAKE_CURRENT_LIST_DIR}/QavsiIconsFonts.cmake")
 
 function(qavsi_icons_add_material_fonts target)
@@ -41,6 +42,6 @@ function(qavsi_icons_add_material_fonts target)
         list(REMOVE_DUPLICATES codepoints)
         set(selection CODEPOINTS ${codepoints})
     endif()
-    _qavsi_icons_add_font_resources(${target} QRC_PREFIX "/qt/qml/Qavsi/Icons/Material/fonts"
+    _qavsi_icons_add_font_resources(${target} QRC_PREFIX "${QAVSI_ICONS_MATERIAL_FONT_QRC_PATH}"
         FONTS ${fonts} ${selection})
 endfunction()

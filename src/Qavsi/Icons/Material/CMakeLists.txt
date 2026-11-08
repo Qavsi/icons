@@ -20,6 +20,7 @@ target_include_directories(${module_target}Plugin PRIVATE "${CMAKE_CURRENT_BINAR
 set_target_properties(${module_target} PROPERTIES EXPORT_NAME Material VERSION ${PROJECT_VERSION} SOVERSION 0.1)
 set_target_properties(${module_target}Plugin PROPERTIES EXPORT_NAME MaterialPlugin)
 target_compile_features(${module_target} PUBLIC cxx_std_20)
+target_compile_definitions(${module_target} PRIVATE QAVSI_ICONS_MATERIAL_FONT_QRC_PATH=":${QAVSI_ICONS_MATERIAL_FONT_QRC_PATH}/")
 target_link_libraries(${module_target} PUBLIC QavsiIcons::Core PRIVATE Qt6::Quick)
 add_library(QavsiIcons::Material ALIAS ${module_target})
 include("${PROJECT_SOURCE_DIR}/cmake/InstallQmlModule.cmake")

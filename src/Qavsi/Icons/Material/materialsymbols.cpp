@@ -9,9 +9,9 @@ namespace Qavsi::Icons::Material {
 MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
 {
     const auto registerFont = [](const QString &file) {
-        if (!QFile::exists(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/") + file)) return QString{};
+        if (!QFile::exists(QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH) + file)) return QString{};
         const int id = QFontDatabase::addApplicationFont(
-            QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/") + file);
+            QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH) + file);
         const auto families = QFontDatabase::applicationFontFamilies(id);
         if (id < 0 || families.isEmpty())
             qWarning() << "Qavsi.Icons.Material: bundled font could not be registered:" << file;
@@ -25,8 +25,8 @@ MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
     m_outlineFamily = outline;
     m_filledFamily = filled;
     if (m_outlineFamily.isEmpty() || m_filledFamily.isEmpty()) return;
-    const QRawFont raw(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRoundedOutline.ttf"), 24);
-    QFile metadata(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.codepoints"));
+    const QRawFont raw(QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH "MaterialSymbolsRoundedOutline.ttf"), 24);
+    QFile metadata(QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH "MaterialSymbolsRounded.codepoints"));
     if (!metadata.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("Qavsi.Icons.Material: bundled catalog could not be read");
         m_family.clear();
