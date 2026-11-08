@@ -10,8 +10,7 @@ qt_add_qml_module(${module_target}
     IMPORTS TARGET QavsiIconsCore
     SOURCES materialsymbols.h materialsymbols.cpp
     QML_FILES MaterialGlyph.qml
-    RESOURCES fonts/MaterialSymbolsRounded.ttf fonts/MaterialSymbolsRounded.codepoints
-        fonts/MaterialSymbolsRoundedOutline.ttf fonts/MaterialSymbolsRoundedFilled.ttf
+    RESOURCES fonts/MaterialSymbolsRounded.codepoints
         fonts/instances.json
         fonts/LICENSE fonts/provenance.json
     OUTPUT_TARGETS module_auxiliary_targets)

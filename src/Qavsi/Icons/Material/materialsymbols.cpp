@@ -4,10 +4,12 @@
 #include <QFile>
 #include <QFontDatabase>
 #include <QDebug>
+#include <QRawFont>
 namespace Qavsi::Icons::Material {
 MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
 {
     const auto registerFont = [](const QString &file) {
+        if (!QFile::exists(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/") + file)) return QString{};
         const int id = QFontDatabase::addApplicationFont(
             QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/") + file);
         const auto families = QFontDatabase::applicationFontFamilies(id);
@@ -22,7 +24,8 @@ MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
     m_family = variable;
     m_outlineFamily = outline;
     m_filledFamily = filled;
-    if (m_family.isEmpty()) return;
+    if (m_outlineFamily.isEmpty() || m_filledFamily.isEmpty()) return;
+    const QRawFont raw(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRoundedOutline.ttf"), 24);
     QFile metadata(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.codepoints"));
     if (!metadata.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("Qavsi.Icons.Material: bundled catalog could not be read");
@@ -34,7 +37,8 @@ MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
         if (fields.size() != 2) continue;
         bool ok = false;
         const auto value = fields.at(1).toUInt(&ok, 16);
-        if (!ok || value > 0x10ffff || (value >= 0xd800 && value <= 0xdfff)) continue;
+        if (!ok || value > 0x10ffff || (value >= 0xd800 && value <= 0xdfff)
+            || !raw.supportsCharacter(value)) continue;
         const char32_t codepoint = value;
         m_glyphs.insert(QString::fromUtf8(fields.first()), QString::fromUcs4(&codepoint, 1));
     }

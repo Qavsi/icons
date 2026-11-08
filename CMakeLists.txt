@@ -15,6 +15,7 @@ if(NOT QT_QML_OUTPUT_DIRECTORY)
 endif()
 add_subdirectory(src/Qavsi/Icons)
 if(QAVSI_ICONS_BUILD_MATERIAL)
+    include(cmake/QavsiIconsMaterialFonts.cmake)
     add_subdirectory(src/Qavsi/Icons/Material)
 endif()
 set(QavsiIcons_QML_IMPORT_DIR "${QT_QML_OUTPUT_DIRECTORY}")
@@ -34,6 +35,13 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/QavsiIconsConfig.cmake"
 install(EXPORT QavsiIconsCoreTargets NAMESPACE QavsiIcons::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons")
 if(QAVSI_ICONS_BUILD_MATERIAL)
+    install(FILES cmake/QavsiIconsFonts.cmake cmake/QavsiIconsMaterialFonts.cmake
+        tools/subset-fonts.py DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons")
+    install(FILES src/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.codepoints
+        src/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.ttf
+        src/Qavsi/Icons/Material/fonts/MaterialSymbolsRoundedOutline.ttf
+        src/Qavsi/Icons/Material/fonts/MaterialSymbolsRoundedFilled.ttf
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons/material-fonts")
     install(EXPORT QavsiIconsMaterialTargets NAMESPACE QavsiIcons::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons")
 endif()
