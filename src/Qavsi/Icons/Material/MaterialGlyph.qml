@@ -15,10 +15,19 @@ IconGlyph {
     readonly property real opticalSize: finiteBound(appearance?.opticalSize, 24, 20, 48)
     readonly property int grade: finiteBound(appearance?.grade, 0, -50, 200)
     readonly property bool defaultAxes: weight === 400 && opticalSize === 24 && grade === 0
-    readonly property string family: defaultAxes && fill === 0
-        ? MaterialSymbols.outlineFamily || MaterialSymbols.family
-        : defaultAxes && fill === 1 ? MaterialSymbols.filledFamily || MaterialSymbols.family
-        : MaterialSymbols.family
+    readonly property bool needsVariable: !defaultAxes || (fill !== 0 && fill !== 1)
+    readonly property bool fallbackAxes: needsVariable && !MaterialSymbols.family.length
+    readonly property real effectiveFill: fallbackAxes ? Math.round(fill) : fill
+    readonly property string family: needsVariable && !fallbackAxes ? MaterialSymbols.family
+        : effectiveFill === 0 ? MaterialSymbols.outlineFamily : MaterialSymbols.filledFamily
+    function warnFallback(): void {
+        if (status === Image.Ready && fallbackAxes)
+            IconRegistry.warnOnce("material:" + name, qsTr("variable font unavailable; using static font defaults"))
+    }
+    onFallbackAxesChanged: Qt.callLater(warnFallback)
+    onNameChanged: Qt.callLater(warnFallback)
+    onStatusChanged: Qt.callLater(warnFallback)
+    Component.onCompleted: Qt.callLater(warnFallback)
     readonly property int requestedRenderType: appearance?.renderType === Text.QtRendering
         || appearance?.renderType === Text.NativeRendering || appearance?.renderType === Text.CurveRendering
         ? appearance.renderType : Text.CurveRendering
@@ -32,9 +41,9 @@ IconGlyph {
         color: root.color
         font.family: root.family
         font.pixelSize: root.finiteBound(root.size, 1, 1, 4096)
-        font.weight: root.weight
-        font.variableAxes: ({ "FILL": root.fill, "wght": root.weight,
-            "opsz": root.opticalSize, "GRAD": root.grade })
+        font.weight: root.fallbackAxes ? 400 : root.weight
+        font.variableAxes: ({ "FILL": root.effectiveFill, "wght": root.fallbackAxes ? 400 : root.weight,
+            "opsz": root.fallbackAxes ? 24 : root.opticalSize, "GRAD": root.fallbackAxes ? 0 : root.grade })
         renderType: root.GraphicsInfo.api === GraphicsInfo.Software && root.requestedRenderType === Text.CurveRendering
             ? Text.QtRendering : root.requestedRenderType
         horizontalAlignment: Text.AlignHCenter
