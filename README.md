@@ -22,7 +22,7 @@ weight/grade/opticalSize/renderType. Material defaults are 400/0/24/CurveRenderi
 software uses QtRendering. Optional `appearance.axes.FILL` accepts a finite numeric
 value clamped to 0..1; absent or invalid values retain `filled`'s 0/1 behavior.
 Use a QtObject for live appearance bindings, or replace a JS map to notify changes.
-Font/catalog/licenses are owned only by Material.
+The Material catalog and licenses ship with the provider; applications package fonts explicitly.
 There are no font-family or token defaults in Core.
 
 Source: add_subdirectory(path/to/icons icons), link QavsiIcons::Core and the
@@ -42,7 +42,26 @@ block(SCOPE_FOR VARIABLES)
     FetchContent_MakeAvailable(qavsi_icons)
 endblock()
 target_link_libraries(myapp PRIVATE QavsiIconsCorePlugin QavsiIconsMaterialPlugin)
+qavsi_icons_add_material_fonts(myapp ICONS settings home)
 ```
+
+For an installed package:
+
+```cmake
+find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Core Material)
+target_link_libraries(myapp PRIVATE QavsiIcons::Core QavsiIcons::Material)
+qavsi_icons_add_material_fonts(myapp ICONS settings home VARIABLE)
+```
+
+Use `ALL` instead of `ICONS ...` to embed both complete static fonts without
+Python. Add `VARIABLE` to either form to include the variable font. `ICONS`
+requires Python 3 and fontTools at build time; set `Python3_EXECUTABLE` to the
+interpreter containing fontTools. Unknown names and keywords fail configure.
+Applications may use `file(STRINGS)` to load names from their own file.
+Without this function icons show the missing mark and warn once per name.
+Without `VARIABLE`, fractional FILL rounds to 0 or 1 and custom axes use
+400/0/24; the provider warns once per name when this fallback is needed.
+Subset fonts drop GSUB ligatures; `ALL` copies the original fonts unchanged.
 
 Linking these static plugin targets includes their Qt-generated plugin imports and
 resource initializers. Omit the Material plugin for a Core-only build. See
@@ -68,12 +87,10 @@ mutation is included in this slice.
 
 ### Material font endpoints
 
-Material uses clean full-catalog static instances at the default 400/24/GRAD0
-FILL0/1 endpoints. Fractional FILL and custom axes retain the original variable
-font. This keeps CurveRendering on RHI and QtRendering on software. The optional
-provider includes about 3.1 MiB of derived endpoint assets; Core is unchanged.
+Material uses clean static instances at the default 400/24/GRAD0
+FILL0/1 endpoints. Fractional FILL and custom axes use the variable font when included. This keeps CurveRendering on RHI and QtRendering on software. The application selects the assets it embeds.
 
-The committed assets need no generator at build/runtime. To regenerate from the
+The committed source assets need no generator at build/runtime; subset builds use fontTools. To regenerate from the
 pinned upstream source:
 
 ```sh
