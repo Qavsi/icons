@@ -57,7 +57,8 @@ Use `ALL` instead of `ICONS ...` to embed both complete static fonts without
 Python. Add `VARIABLE` to either form to include the variable font. `ICONS`
 requires Python 3 and fontTools at configure and build time; set `Python3_EXECUTABLE` to the
 interpreter containing fontTools. Unknown names and keywords fail configure.
-Call the function once per build on the final executable; merge icon needs from libraries there.
+Call the function once per final executable; merge icon needs from libraries there.
+Separate executables may select different icons and font modes.
 Applications may use `file(STRINGS)` to load names from their own file.
 Without this function icons show the missing mark and warn once per name.
 Without `VARIABLE`, fractional FILL rounds to 0 or 1 and custom axes use

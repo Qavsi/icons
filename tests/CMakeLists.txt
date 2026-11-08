@@ -72,10 +72,14 @@ if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
 endif()
 
 if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
-    foreach(mode IN ITEMS subset fallback nofonts all)
+    foreach(mode IN ITEMS subset fallback nofonts all multiple)
+        set(test_modes "${mode}")
+        if(mode STREQUAL "multiple")
+            set(test_modes "subset;fallback;nofonts;all")
+        endif()
         add_test(NAME fonts-${mode} COMMAND "${CMAKE_COMMAND}"
             "-DSOURCE=${CMAKE_SOURCE_DIR}" "-DTEST_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}"
-            "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/mode-${mode}" "-DMODE=${mode}"
+            "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/mode-${mode}" "-DMODE=${test_modes}"
             "-DPREFIX=${CMAKE_PREFIX_PATH}" "-DPYTHON=${Python3_EXECUTABLE}"
             "-DSHARED=${BUILD_SHARED_LIBS}" "-DGENERATOR=${CMAKE_GENERATOR}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/run-font-mode.cmake")

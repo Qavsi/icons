@@ -14,7 +14,7 @@ execute_process(COMMAND "${CMAKE_COMMAND}" --build "${BINARY}" RESULT_VARIABLE r
 if(result)
     message(FATAL_ERROR "Font mode build failed: ${result}")
 endif()
-execute_process(COMMAND "${CMAKE_CTEST_COMMAND}" --test-dir "${BINARY}" --output-on-failure -R "^fonts-${MODE}$" RESULT_VARIABLE result)
+execute_process(COMMAND "${CMAKE_CTEST_COMMAND}" --test-dir "${BINARY}" --output-on-failure -R "^fonts-" RESULT_VARIABLE result)
 if(result)
     message(FATAL_ERROR "Font mode test failed: ${result}")
 endif()
