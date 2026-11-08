@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.30)
 project(QavsiIconsCheck LANGUAGES CXX)
-find_package(Qt6 6.12 REQUIRED COMPONENTS Quick Test)
-qt_standard_project_setup(REQUIRES 6.12)
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/QtMinimum.cmake")
+find_package(Qt6 ${QAVSI_ICONS_QT_MIN} REQUIRED COMPONENTS Quick Test)
+qt_standard_project_setup(REQUIRES ${QAVSI_ICONS_QT_MIN})
 
 option(QAVSI_ICONS_TEST_MATERIAL "Test the optional Material provider" ${QAVSI_ICONS_BUILD_MATERIAL})
 if(NOT TARGET QavsiIcons::Core)

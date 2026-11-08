@@ -1,0 +1,1 @@
+set(QAVSI_ICONS_QT_MIN 6.8)
