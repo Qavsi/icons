@@ -1,6 +1,6 @@
 # Qavsi Icons
 
-Qt 6.12+, CMake 3.30+, C++20. Independent package icon routing with public Qt
+Qt 6.8+, CMake 3.30+, C++20. Independent package icon routing with public Qt
 QIcon/QPainter and provider-owned font rendering. No Merce, design tokens,
 StyleKit, theme selection or icon-name equivalence dictionary.
 
@@ -29,6 +29,24 @@ Source: add_subdirectory(path/to/icons icons), link QavsiIcons::Core and the
 optional QavsiIcons::Material. Installed: find_package(QavsiIcons 0.1 CONFIG
 REQUIRED COMPONENTS Core Material), then the same targets/imports. Core-only
 build: QAVSI_ICONS_BUILD_MATERIAL=OFF. No network fetch is needed.
+
+For static modules with FetchContent, limit the variable to the dependency:
+
+```cmake
+include(FetchContent)
+block(SCOPE_FOR VARIABLES)
+    set(BUILD_SHARED_LIBS OFF)
+    set(QAVSI_ICONS_BUILD_TESTS OFF)
+    FetchContent_Declare(qavsi_icons GIT_REPOSITORY https://github.com/Qavsi/icons.git
+        GIT_TAG <pinned-commit>)
+    FetchContent_MakeAvailable(qavsi_icons)
+endblock()
+target_link_libraries(myapp PRIVATE QavsiIconsCorePlugin QavsiIconsMaterialPlugin)
+```
+
+Linking these static plugin targets includes their Qt-generated plugin imports and
+resource initializers. Omit the Material plugin for a Core-only build. See
+`tests/static-consumer` for a runnable example.
 
 `name` accepts exact package:icon. `qt:document-save` uses QIcon::fromTheme;
 `image:qrc:/...` or source:url uses a local/qrc image. `source` is the fallback

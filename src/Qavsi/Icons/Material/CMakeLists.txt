@@ -1,8 +1,10 @@
 set(module_target QavsiIconsMaterial)
 set(module_export QavsiIconsMaterialTargets)
-qt_add_qml_module(${module_target} SHARED
+add_library(${module_target})
+qt_add_qml_module(${module_target}
     URI Qavsi.Icons.Material
     PLUGIN_TARGET ${module_target}Plugin
+    CLASS_NAME MaterialPlugin
     NO_GENERATE_PLUGIN_SOURCE
     NO_PLUGIN_OPTIONAL
     IMPORTS TARGET QavsiIconsCore
