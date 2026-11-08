@@ -4,12 +4,14 @@
 #include <QFile>
 #include <QFontDatabase>
 #include <QDebug>
+#include <QRawFont>
 namespace Qavsi::Icons::Material {
 MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
 {
     const auto registerFont = [](const QString &file) {
+        if (!QFile::exists(QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH) + file)) return QString{};
         const int id = QFontDatabase::addApplicationFont(
-            QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/") + file);
+            QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH) + file);
         const auto families = QFontDatabase::applicationFontFamilies(id);
         if (id < 0 || families.isEmpty())
             qWarning() << "Qavsi.Icons.Material: bundled font could not be registered:" << file;
@@ -22,8 +24,9 @@ MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
     m_family = variable;
     m_outlineFamily = outline;
     m_filledFamily = filled;
-    if (m_family.isEmpty()) return;
-    QFile metadata(QStringLiteral(":/qt/qml/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.codepoints"));
+    if (m_outlineFamily.isEmpty() || m_filledFamily.isEmpty()) return;
+    const QRawFont raw(QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH "MaterialSymbolsRoundedOutline.ttf"), 24);
+    QFile metadata(QStringLiteral(QAVSI_ICONS_MATERIAL_FONT_QRC_PATH "MaterialSymbolsRounded.codepoints"));
     if (!metadata.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("Qavsi.Icons.Material: bundled catalog could not be read");
         m_family.clear();
@@ -34,7 +37,8 @@ MaterialSymbols::MaterialSymbols(QObject *parent) : QObject(parent)
         if (fields.size() != 2) continue;
         bool ok = false;
         const auto value = fields.at(1).toUInt(&ok, 16);
-        if (!ok || value > 0x10ffff || (value >= 0xd800 && value <= 0xdfff)) continue;
+        if (!ok || value > 0x10ffff || (value >= 0xd800 && value <= 0xdfff)
+            || !raw.supportsCharacter(value)) continue;
         const char32_t codepoint = value;
         m_glyphs.insert(QString::fromUtf8(fields.first()), QString::fromUcs4(&codepoint, 1));
     }

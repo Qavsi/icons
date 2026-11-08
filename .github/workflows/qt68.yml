@@ -1,0 +1,23 @@
+name: Qt 6.8 software
+on: [push, pull_request]
+
+jobs:
+  qt68:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        shared: [ON, OFF]
+    env:
+      QT_QUICK_BACKEND: software
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          cache: true
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build libgl1 libxkbcommon-x11-0 libxcb-cursor0
+      - run: python3 -m venv build/font-tools && build/font-tools/bin/pip install fonttools==4.60.1
+      - run: cmake -S . -B build -G Ninja -DQAVSI_ICONS_BUILD_TESTS=ON -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DPython3_EXECUTABLE=$PWD/build/font-tools/bin/python
+      - run: cmake --build build
+      - run: ctest --test-dir build --output-on-failure

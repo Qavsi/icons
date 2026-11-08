@@ -1,0 +1,20 @@
+if(EXISTS "${SOURCE}/cmake/QavsiIconsFonts.cmake")
+    set(project_source "${SOURCE}")
+else()
+    set(project_source "${TEST_SOURCE}")
+endif()
+execute_process(COMMAND "${CMAKE_COMMAND}" -S "${project_source}" -B "${BINARY}" -G "${GENERATOR}"
+    "-DCMAKE_PREFIX_PATH=${PREFIX}" "-DPython3_EXECUTABLE=${PYTHON}"
+    "-DBUILD_SHARED_LIBS=${SHARED}" "-DQAVSI_ICONS_TEST_MATERIAL=ON" "-DQAVSI_ICONS_TEST_MODE=${MODE}"
+    RESULT_VARIABLE result)
+if(result)
+    message(FATAL_ERROR "Font mode configure failed: ${result}")
+endif()
+execute_process(COMMAND "${CMAKE_COMMAND}" --build "${BINARY}" RESULT_VARIABLE result)
+if(result)
+    message(FATAL_ERROR "Font mode build failed: ${result}")
+endif()
+execute_process(COMMAND "${CMAKE_CTEST_COMMAND}" --test-dir "${BINARY}" --output-on-failure -R "^fonts-" RESULT_VARIABLE result)
+if(result)
+    message(FATAL_ERROR "Font mode test failed: ${result}")
+endif()

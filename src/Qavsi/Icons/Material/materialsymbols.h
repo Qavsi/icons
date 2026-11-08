@@ -23,7 +23,7 @@ public:
     QString outlineFamily() const { return m_outlineFamily; }
     QString filledFamily() const { return m_filledFamily; }
     QStringList names() const { return m_names; }
-    bool ready() const { return !m_family.isEmpty() && !m_glyphs.isEmpty(); }
+    bool ready() const { return !m_outlineFamily.isEmpty() && !m_filledFamily.isEmpty() && !m_glyphs.isEmpty(); }
     int glyphCount() const { return m_glyphs.size(); }
     Q_INVOKABLE QString glyph(const QString &name) const { return m_glyphs.value(name); }
     Q_INVOKABLE bool contains(const QString &name) const { return m_glyphs.contains(name); }

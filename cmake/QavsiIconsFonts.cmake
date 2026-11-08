@@ -1,0 +1,61 @@
+include_guard(GLOBAL)
+function(_qavsi_icons_require_executable target)
+    if(NOT TARGET "${target}")
+        message(FATAL_ERROR "Font target '${target}' does not exist; call it on the final executable and merge library icon needs there")
+    endif()
+    get_target_property(target_type "${target}" TYPE)
+    if(NOT target_type STREQUAL "EXECUTABLE")
+        message(FATAL_ERROR "Font target '${target}' must be an EXECUTABLE; call it on the final executable and merge library icon needs there")
+    endif()
+endfunction()
+
+function(_qavsi_icons_add_font_resources target)
+    _qavsi_icons_require_executable("${target}")
+    cmake_parse_arguments(PARSE_ARGV 1 arg "ALL" "QRC_PREFIX" "FONTS;CODEPOINTS")
+    if(arg_UNPARSED_ARGUMENTS OR NOT TARGET "${target}" OR NOT arg_QRC_PREFIX OR NOT arg_FONTS
+       OR (arg_ALL AND arg_CODEPOINTS) OR (NOT arg_ALL AND NOT arg_CODEPOINTS))
+        message(FATAL_ERROR "Invalid font resource arguments for ${target}")
+    endif()
+    string(MD5 provider_id "${arg_QRC_PREFIX}")
+    get_property(added TARGET "${target}" PROPERTY QAVSI_ICONS_FONT_RESOURCES_${provider_id})
+    if(added)
+        message(FATAL_ERROR "Font resources may be added only once per executable and provider; call it on the final executable and merge library icon needs there")
+    endif()
+    set_property(TARGET "${target}" PROPERTY QAVSI_ICONS_FONT_RESOURCES_${provider_id} TRUE)
+    if(EXISTS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../tools/subset-fonts.py")
+        set(_QAVSI_FONT_SCRIPT "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../tools/subset-fonts.py")
+    else()
+        set(_QAVSI_FONT_SCRIPT "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/subset-fonts.py")
+    endif()
+    if(NOT arg_ALL)
+        find_package(Python3 QUIET COMPONENTS Interpreter)
+        if(Python3_Interpreter_FOUND)
+            execute_process(COMMAND "${Python3_EXECUTABLE}" -c "import fontTools"
+                RESULT_VARIABLE fonttools_result OUTPUT_QUIET ERROR_QUIET)
+        endif()
+        if(NOT Python3_Interpreter_FOUND OR NOT fonttools_result EQUAL 0)
+            message(FATAL_ERROR "ICONS needs Python 3 with fontTools; install python3-fonttools or pip install fonttools, or use ALL")
+        endif()
+    endif()
+    string(MD5 resource_id "${CMAKE_CURRENT_BINARY_DIR}/${target}/${arg_QRC_PREFIX}")
+    set(output_dir "${CMAKE_CURRENT_BINARY_DIR}/qavsi-fonts-${resource_id}")
+    foreach(font IN LISTS arg_FONTS)
+        get_filename_component(filename "${font}" NAME)
+        set(output "${output_dir}/${filename}")
+        if(arg_ALL)
+            add_custom_command(OUTPUT "${output}"
+                COMMAND "${CMAKE_COMMAND}" -E make_directory "${output_dir}"
+                COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${font}" "${output}"
+                DEPENDS "${font}" VERBATIM)
+        else()
+            add_custom_command(OUTPUT "${output}"
+                COMMAND "${CMAKE_COMMAND}" -E make_directory "${output_dir}"
+                COMMAND "${Python3_EXECUTABLE}" "${_QAVSI_FONT_SCRIPT}"
+                    "${font}" "${output}" ${arg_CODEPOINTS}
+                DEPENDS "${font}" "${_QAVSI_FONT_SCRIPT}" VERBATIM)
+        endif()
+        list(APPEND outputs "${output}")
+    endforeach()
+    qt_add_resources(${target} "qavsi_fonts_${resource_id}" PREFIX "${arg_QRC_PREFIX}"
+        BASE "${output_dir}" FILES ${outputs})
+endfunction()

@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.30)
 project(QavsiIconsCheck LANGUAGES CXX)
-find_package(Qt6 6.12 REQUIRED COMPONENTS Quick Test)
-qt_standard_project_setup(REQUIRES 6.12)
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/QtMinimum.cmake")
+find_package(Qt6 ${QAVSI_ICONS_QT_MIN} REQUIRED COMPONENTS Quick Test)
+qt_standard_project_setup(REQUIRES ${QAVSI_ICONS_QT_MIN})
 
 option(QAVSI_ICONS_TEST_MATERIAL "Test the optional Material provider" ${QAVSI_ICONS_BUILD_MATERIAL})
 if(NOT TARGET QavsiIcons::Core)
-    find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Core)
+    find_package(QavsiIcons 0.2 CONFIG REQUIRED COMPONENTS Core)
 endif()
 if(QAVSI_ICONS_TEST_MATERIAL AND NOT TARGET QavsiIcons::Material)
-    find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Material)
+    find_package(QavsiIcons 0.2 CONFIG REQUIRED COMPONENTS Material)
 endif()
+enable_testing()
+if(NOT QAVSI_ICONS_TEST_MODE)
 qt_add_executable(qavsi-icons-check checks.cpp)
 qt_add_qml_module(qavsi-icons-check URI Qavsi.Icons.Tests
     QML_FILES TestGlyph.qml
@@ -18,14 +21,74 @@ target_compile_features(qavsi-icons-check PRIVATE cxx_std_20)
 target_compile_definitions(qavsi-icons-check PRIVATE
     QAVSI_ICONS_TEST_IMPORT_PATH="${QavsiIcons_QML_IMPORT_DIR}")
 target_link_libraries(qavsi-icons-check PRIVATE Qt6::Quick Qt6::Test QavsiIcons::Core)
+if(NOT BUILD_SHARED_LIBS)
+    target_link_libraries(qavsi-icons-check PRIVATE QavsiIconsCorePlugin)
+endif()
 if(QAVSI_ICONS_TEST_MATERIAL)
+    qavsi_icons_add_material_fonts(qavsi-icons-check ALL VARIABLE)
     target_link_libraries(qavsi-icons-check PRIVATE QavsiIcons::Material)
     target_compile_definitions(qavsi-icons-check PRIVATE QAVSI_ICONS_TEST_MATERIAL=1)
+    if(NOT BUILD_SHARED_LIBS)
+        target_link_libraries(qavsi-icons-check PRIVATE QavsiIconsMaterialPlugin)
+    endif()
 endif()
-enable_testing()
 add_test(NAME icons-software COMMAND qavsi-icons-check)
 set_tests_properties(icons-software PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
 add_test(NAME icons-software-dpr2 COMMAND qavsi-icons-check)
 set_tests_properties(icons-software-dpr2 PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software;QT_SCALE_FACTOR=2")
+
+endif()
+
+if(QAVSI_ICONS_TEST_MATERIAL AND QAVSI_ICONS_TEST_MODE)
+    foreach(mode IN ITEMS ${QAVSI_ICONS_TEST_MODE})
+        qt_add_executable(qavsi-icons-${mode} font-modes.cpp)
+        target_link_libraries(qavsi-icons-${mode} PRIVATE Qt6::Quick Qt6::Test QavsiIcons::Core QavsiIcons::Material)
+        if(NOT BUILD_SHARED_LIBS)
+            target_link_libraries(qavsi-icons-${mode} PRIVATE QavsiIconsCorePlugin QavsiIconsMaterialPlugin)
+        endif()
+        target_compile_definitions(qavsi-icons-${mode} PRIVATE MODE_${mode} QAVSI_ICONS_TEST_IMPORT_PATH="${QavsiIcons_QML_IMPORT_DIR}")
+        if(mode STREQUAL "subset")
+            qavsi_icons_add_material_fonts(qavsi-icons-${mode} ICONS settings VARIABLE)
+        elseif(mode STREQUAL "fallback")
+            qavsi_icons_add_material_fonts(qavsi-icons-${mode} ICONS settings)
+        elseif(mode STREQUAL "all")
+            qavsi_icons_add_material_fonts(qavsi-icons-${mode} ALL)
+        endif()
+        add_test(NAME fonts-${mode} COMMAND qavsi-icons-${mode})
+        set_tests_properties(fonts-${mode} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+    endforeach()
+endif()
+
+if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
+    foreach(invalid IN ITEMS no_such_material_icon "settings.*" UNKNOWN_KEYWORD)
+        add_test(NAME invalid-${invalid} COMMAND "${CMAKE_COMMAND}"
+            -S "${CMAKE_CURRENT_SOURCE_DIR}/invalid-consumer"
+            -B "${CMAKE_CURRENT_BINARY_DIR}/invalid-${invalid}"
+            -DQAVSI_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/.. -DINVALID_ICON=${invalid})
+        set_tests_properties(invalid-${invalid} PROPERTIES WILL_FAIL TRUE)
+    endforeach()
+endif()
+
+if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
+    foreach(mode IN ITEMS subset fallback nofonts all multiple)
+        set(test_modes "${mode}")
+        if(mode STREQUAL "multiple")
+            set(test_modes "subset;fallback;nofonts;all")
+        endif()
+        add_test(NAME fonts-${mode} COMMAND "${CMAKE_COMMAND}"
+            "-DSOURCE=${CMAKE_SOURCE_DIR}" "-DTEST_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}"
+            "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/mode-${mode}" "-DMODE=${test_modes}"
+            "-DPREFIX=${CMAKE_PREFIX_PATH}" "-DPYTHON=${Python3_EXECUTABLE}"
+            "-DSHARED=${BUILD_SHARED_LIBS}" "-DGENERATOR=${CMAKE_GENERATOR}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run-font-mode.cmake")
+    endforeach()
+    foreach(case IN ITEMS target helper_target duplicate missing_fonttools)
+        add_test(NAME font-error-${case} COMMAND "${CMAKE_COMMAND}"
+            "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}/invalid-consumer"
+            "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/error-${case}"
+            "-DQAVSI_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/.." "-DCASE=${case}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/check-font-error.cmake")
+    endforeach()
+endif()

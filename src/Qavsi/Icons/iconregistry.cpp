@@ -27,9 +27,10 @@ bool IconRegistry::registerPackage(const QString &name, const QUrl &renderer)
 }
 void IconRegistry::warnOnce(const QString &name, const QString &reason)
 {
-    if (m_warned.contains(name))
+    const auto key = qMakePair(name, reason);
+    if (m_warned.contains(key))
         return;
-    m_warned.insert(name);
+    m_warned.insert(key);
     qWarning().noquote() << "Qavsi.Icons:" << name << reason;
 }
 }

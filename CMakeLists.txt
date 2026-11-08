@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.30)
-project(QavsiIcons VERSION 0.1.0 LANGUAGES CXX)
+project(QavsiIcons VERSION 0.2.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt6 6.12 REQUIRED COMPONENTS Quick)
-qt_standard_project_setup(REQUIRES 6.12)
+include(cmake/QtMinimum.cmake)
+find_package(Qt6 ${QAVSI_ICONS_QT_MIN} REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES ${QAVSI_ICONS_QT_MIN})
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(QAVSI_ICONS_BUILD_MATERIAL "Build the Material Symbols provider" ON)
 option(QAVSI_ICONS_BUILD_TESTS "Build icon contract tests" ${PROJECT_IS_TOP_LEVEL})
 if(NOT QT_QML_OUTPUT_DIRECTORY)
@@ -13,6 +15,7 @@ if(NOT QT_QML_OUTPUT_DIRECTORY)
 endif()
 add_subdirectory(src/Qavsi/Icons)
 if(QAVSI_ICONS_BUILD_MATERIAL)
+    include(cmake/QavsiIconsMaterialFonts.cmake)
     add_subdirectory(src/Qavsi/Icons/Material)
 endif()
 set(QavsiIcons_QML_IMPORT_DIR "${QT_QML_OUTPUT_DIRECTORY}")
@@ -32,6 +35,13 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/QavsiIconsConfig.cmake"
 install(EXPORT QavsiIconsCoreTargets NAMESPACE QavsiIcons::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons")
 if(QAVSI_ICONS_BUILD_MATERIAL)
+    install(FILES cmake/QavsiIconsFonts.cmake cmake/QavsiIconsMaterialFonts.cmake
+        tools/subset-fonts.py DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons")
+    install(FILES src/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.codepoints
+        src/Qavsi/Icons/Material/fonts/MaterialSymbolsRounded.ttf
+        src/Qavsi/Icons/Material/fonts/MaterialSymbolsRoundedOutline.ttf
+        src/Qavsi/Icons/Material/fonts/MaterialSymbolsRoundedFilled.ttf
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons/material-fonts")
     install(EXPORT QavsiIconsMaterialTargets NAMESPACE QavsiIcons::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QavsiIcons")
 endif()

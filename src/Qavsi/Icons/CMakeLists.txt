@@ -1,6 +1,7 @@
 set(module_target QavsiIconsCore)
 set(module_export QavsiIconsCoreTargets)
-qt_add_qml_module(${module_target} SHARED
+add_library(${module_target})
+qt_add_qml_module(${module_target}
     URI Qavsi.Icons
     PLUGIN_TARGET ${module_target}Plugin
     SOURCES iconregistry.h iconregistry.cpp nativeiconimage.h nativeiconimage.cpp
@@ -8,7 +9,10 @@ qt_add_qml_module(${module_target} SHARED
     OUTPUT_TARGETS module_auxiliary_targets)
 include(GenerateExportHeader)
 generate_export_header(${module_target} EXPORT_FILE_NAME QavsiIconsExport.h)
-set_target_properties(${module_target} PROPERTIES EXPORT_NAME Core VERSION ${PROJECT_VERSION} SOVERSION 0.1)
+if(NOT BUILD_SHARED_LIBS)
+    target_compile_definitions(${module_target} PUBLIC QAVSIICONSCORE_STATIC_DEFINE)
+endif()
+set_target_properties(${module_target} PROPERTIES EXPORT_NAME Core VERSION ${PROJECT_VERSION} SOVERSION 0.2)
 set_target_properties(${module_target}Plugin PROPERTIES EXPORT_NAME CorePlugin)
 target_compile_features(${module_target} PUBLIC cxx_std_20)
 target_include_directories(${module_target} PUBLIC
