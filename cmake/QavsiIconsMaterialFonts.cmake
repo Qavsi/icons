@@ -2,6 +2,7 @@ include_guard(GLOBAL)
 include("${CMAKE_CURRENT_LIST_DIR}/QavsiIconsFonts.cmake")
 
 function(qavsi_icons_add_material_fonts target)
+    _qavsi_icons_require_executable("${target}")
     cmake_parse_arguments(PARSE_ARGV 1 arg "ALL;VARIABLE" "" "ICONS")
     if(arg_UNPARSED_ARGUMENTS OR (arg_ALL AND arg_ICONS) OR (NOT arg_ALL AND NOT arg_ICONS))
         message(FATAL_ERROR "Choose ICONS <names...> or ALL, optionally with VARIABLE")

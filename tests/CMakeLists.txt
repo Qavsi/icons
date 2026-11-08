@@ -11,6 +11,8 @@ endif()
 if(QAVSI_ICONS_TEST_MATERIAL AND NOT TARGET QavsiIcons::Material)
     find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Material)
 endif()
+enable_testing()
+if(NOT QAVSI_ICONS_TEST_MODE)
 qt_add_executable(qavsi-icons-check checks.cpp)
 qt_add_qml_module(qavsi-icons-check URI Qavsi.Icons.Tests
     QML_FILES TestGlyph.qml
@@ -30,7 +32,6 @@ if(QAVSI_ICONS_TEST_MATERIAL)
         target_link_libraries(qavsi-icons-check PRIVATE QavsiIconsMaterialPlugin)
     endif()
 endif()
-enable_testing()
 add_test(NAME icons-software COMMAND qavsi-icons-check)
 set_tests_properties(icons-software PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
@@ -38,8 +39,10 @@ add_test(NAME icons-software-dpr2 COMMAND qavsi-icons-check)
 set_tests_properties(icons-software-dpr2 PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software;QT_SCALE_FACTOR=2")
 
-if(QAVSI_ICONS_TEST_MATERIAL)
-    foreach(mode IN ITEMS subset fallback nofonts all)
+endif()
+
+if(QAVSI_ICONS_TEST_MATERIAL AND QAVSI_ICONS_TEST_MODE)
+    foreach(mode IN ITEMS ${QAVSI_ICONS_TEST_MODE})
         qt_add_executable(qavsi-icons-${mode} font-modes.cpp)
         target_link_libraries(qavsi-icons-${mode} PRIVATE Qt6::Quick Qt6::Test QavsiIcons::Core QavsiIcons::Material)
         if(NOT BUILD_SHARED_LIBS)
@@ -58,12 +61,30 @@ if(QAVSI_ICONS_TEST_MATERIAL)
     endforeach()
 endif()
 
-if(QAVSI_ICONS_TEST_MATERIAL)
+if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
     foreach(invalid IN ITEMS no_such_material_icon "settings.*" UNKNOWN_KEYWORD)
         add_test(NAME invalid-${invalid} COMMAND "${CMAKE_COMMAND}"
             -S "${CMAKE_CURRENT_SOURCE_DIR}/invalid-consumer"
             -B "${CMAKE_CURRENT_BINARY_DIR}/invalid-${invalid}"
             -DQAVSI_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/.. -DINVALID_ICON=${invalid})
         set_tests_properties(invalid-${invalid} PROPERTIES WILL_FAIL TRUE)
+    endforeach()
+endif()
+
+if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
+    foreach(mode IN ITEMS subset fallback nofonts all)
+        add_test(NAME fonts-${mode} COMMAND "${CMAKE_COMMAND}"
+            "-DSOURCE=${CMAKE_SOURCE_DIR}" "-DTEST_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}"
+            "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/mode-${mode}" "-DMODE=${mode}"
+            "-DPREFIX=${CMAKE_PREFIX_PATH}" "-DPYTHON=${Python3_EXECUTABLE}"
+            "-DSHARED=${BUILD_SHARED_LIBS}" "-DGENERATOR=${CMAKE_GENERATOR}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run-font-mode.cmake")
+    endforeach()
+    foreach(case IN ITEMS target helper_target duplicate)
+        add_test(NAME font-error-${case} COMMAND "${CMAKE_COMMAND}"
+            "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}/invalid-consumer"
+            "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/error-${case}"
+            "-DQAVSI_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/.." "-DCASE=${case}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/check-font-error.cmake")
     endforeach()
 endif()
