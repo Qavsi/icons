@@ -1,7 +1,19 @@
+if(CASE STREQUAL "missing_fonttools")
+    if(NOT PYTHON)
+        find_program(PYTHON NAMES python3 REQUIRED)
+    endif()
+    execute_process(COMMAND "${PYTHON}" -m venv "${BINARY}/empty-venv" RESULT_VARIABLE venv_result)
+    if(venv_result)
+        message(FATAL_ERROR "Could not create test virtual environment")
+    endif()
+    set(test_python "${BINARY}/empty-venv/bin/python")
+endif()
 execute_process(COMMAND "${CMAKE_COMMAND}" -S "${SOURCE}" -B "${BINARY}"
-    "-DQAVSI_SOURCE=${QAVSI_SOURCE}" "-DCASE=${CASE}"
+    "-DQAVSI_SOURCE=${QAVSI_SOURCE}" "-DCASE=${CASE}" "-DTEST_PYTHON=${test_python}"
     RESULT_VARIABLE result OUTPUT_VARIABLE out ERROR_VARIABLE err)
-if(CASE STREQUAL "duplicate")
+if(CASE STREQUAL "missing_fonttools")
+    set(expected "ICONS needs Python 3 with fontTools")
+elseif(CASE STREQUAL "duplicate")
     set(expected "only once")
 else()
     set(expected "final executable")

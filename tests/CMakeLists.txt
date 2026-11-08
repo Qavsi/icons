@@ -80,7 +80,7 @@ if(QAVSI_ICONS_TEST_MATERIAL AND NOT QAVSI_ICONS_TEST_MODE)
             "-DSHARED=${BUILD_SHARED_LIBS}" "-DGENERATOR=${CMAKE_GENERATOR}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/run-font-mode.cmake")
     endforeach()
-    foreach(case IN ITEMS target helper_target duplicate)
+    foreach(case IN ITEMS target helper_target duplicate missing_fonttools)
         add_test(NAME font-error-${case} COMMAND "${CMAKE_COMMAND}"
             "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}/invalid-consumer"
             "-DBINARY=${CMAKE_CURRENT_BINARY_DIR}/error-${case}"
