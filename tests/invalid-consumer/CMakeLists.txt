@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.30)
+project(InvalidConsumer LANGUAGES CXX)
+include("${QAVSI_SOURCE}/cmake/QavsiIconsMaterialFonts.cmake")
+add_library(test INTERFACE)
+qavsi_icons_add_material_fonts(test ICONS "${INVALID_ICON}")
