@@ -63,7 +63,7 @@ if(QAVSI_ICONS_TEST_MATERIAL)
         add_test(NAME invalid-${invalid} COMMAND "${CMAKE_COMMAND}"
             -S "${CMAKE_CURRENT_SOURCE_DIR}/invalid-consumer"
             -B "${CMAKE_CURRENT_BINARY_DIR}/invalid-${invalid}"
-            -DQAVSI_SOURCE=${CMAKE_SOURCE_DIR} -DINVALID_ICON=${invalid})
+            -DQAVSI_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/.. -DINVALID_ICON=${invalid})
         set_tests_properties(invalid-${invalid} PROPERTIES WILL_FAIL TRUE)
     endforeach()
 endif()

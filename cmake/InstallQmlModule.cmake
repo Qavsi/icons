@@ -11,7 +11,8 @@ endif()
 install(TARGETS ${module_target} ${module_auxiliary_targets} EXPORT ${module_export}
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    OBJECTS DESTINATION "${CMAKE_INSTALL_LIBDIR}/qavsi-icons/objects")
 install(TARGETS ${module_target}Plugin EXPORT ${module_export}
     RUNTIME DESTINATION "${module_install_dir}"
     LIBRARY DESTINATION "${module_install_dir}")
