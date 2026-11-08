@@ -26,7 +26,7 @@ The Material catalog and licenses ship with the provider; applications package f
 There are no font-family or token defaults in Core.
 
 Source: add_subdirectory(path/to/icons icons), link QavsiIcons::Core and the
-optional QavsiIcons::Material. Installed: find_package(QavsiIcons 0.1 CONFIG
+optional QavsiIcons::Material. Installed: find_package(QavsiIcons 0.2 CONFIG
 REQUIRED COMPONENTS Core Material), then the same targets/imports. Core-only
 build: QAVSI_ICONS_BUILD_MATERIAL=OFF. No network fetch is needed.
 
@@ -48,15 +48,16 @@ qavsi_icons_add_material_fonts(myapp ICONS settings home)
 For an installed package:
 
 ```cmake
-find_package(QavsiIcons 0.1 CONFIG REQUIRED COMPONENTS Core Material)
+find_package(QavsiIcons 0.2 CONFIG REQUIRED COMPONENTS Core Material)
 target_link_libraries(myapp PRIVATE QavsiIcons::Core QavsiIcons::Material)
 qavsi_icons_add_material_fonts(myapp ICONS settings home VARIABLE)
 ```
 
 Use `ALL` instead of `ICONS ...` to embed both complete static fonts without
 Python. Add `VARIABLE` to either form to include the variable font. `ICONS`
-requires Python 3 and fontTools at build time; set `Python3_EXECUTABLE` to the
+requires Python 3 and fontTools at configure and build time; set `Python3_EXECUTABLE` to the
 interpreter containing fontTools. Unknown names and keywords fail configure.
+Call the function once per build on the final executable; merge icon needs from libraries there.
 Applications may use `file(STRINGS)` to load names from their own file.
 Without this function icons show the missing mark and warn once per name.
 Without `VARIABLE`, fractional FILL rounds to 0 or 1 and custom axes use
@@ -103,3 +104,9 @@ The generator removes overlapping contours, preserves all 4304 catalog names and
 records output hashes in `fonts/instances.json`. See
 [FontTools instancing](https://fonttools.readthedocs.io/en/latest/varLib/instancer.html)
 for the overlap handling used for these assets.
+
+### Breaking changes in 0.2
+
+Material fonts moved from the provider into the application. Migrate by calling
+`qavsi_icons_add_material_fonts(<exe> ALL)` on the final executable. Add
+`VARIABLE` to keep fractional FILL animations and custom axes.

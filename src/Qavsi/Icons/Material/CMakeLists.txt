@@ -17,7 +17,7 @@ qt_add_qml_module(${module_target}
 target_sources(${module_target}Plugin PRIVATE materialplugin.cpp)
 target_link_libraries(${module_target}Plugin PRIVATE QavsiIcons::Core)
 target_include_directories(${module_target}Plugin PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
-set_target_properties(${module_target} PROPERTIES EXPORT_NAME Material VERSION ${PROJECT_VERSION} SOVERSION 0.1)
+set_target_properties(${module_target} PROPERTIES EXPORT_NAME Material VERSION ${PROJECT_VERSION} SOVERSION 0.2)
 set_target_properties(${module_target}Plugin PROPERTIES EXPORT_NAME MaterialPlugin)
 target_compile_features(${module_target} PUBLIC cxx_std_20)
 target_compile_definitions(${module_target} PRIVATE QAVSI_ICONS_MATERIAL_FONT_QRC_PATH=":${QAVSI_ICONS_MATERIAL_FONT_QRC_PATH}/")
