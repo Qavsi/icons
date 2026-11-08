@@ -14,6 +14,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickItem>
+#include <QQuickItemGrabResult>
 #include <QQuickWindow>
 #include <QScreen>
 #include <QSGRendererInterface>
@@ -122,13 +123,12 @@ bool status(QObject *icon, int wanted)
 QImage capture(QObject *root)
 {
     auto *window = qobject_cast<QQuickWindow *>(root);
-    QImage image;
-    expect(window && QTest::qWaitFor([&] {
-        window->requestUpdate();
-        image = window->grabWindow();
-        return !image.isNull();
-    }, 1500), QStringLiteral("actual Qt Quick window produces an image"));
-    return image;
+    // Qt 6.8 offscreen backing stores discard alpha (QTBUG-136755); grab the scene instead.
+    const auto grab = window && QTest::qWaitForWindowExposed(window, 1500)
+        ? window->contentItem()->grabToImage() : QSharedPointer<QQuickItemGrabResult>{};
+    expect(grab && QTest::qWaitFor([&] { return !grab->image().isNull(); }, 1500),
+           QStringLiteral("actual Qt Quick window produces an image"));
+    return grab ? grab->image() : QImage{};
 }
 int alphaPixels(const QImage &image)
 {
