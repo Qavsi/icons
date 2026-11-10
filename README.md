@@ -87,10 +87,18 @@ Tests and remaining limits are recorded in DESIGN.md. No SF/FontAwesome
 provider, mapping table, downloading, control wrapper or global QIcon theme
 mutation is included in this slice.
 
-### Material font endpoints
+### Material static instances
 
-Material uses clean static instances at the default 400/24/GRAD0
-FILL0/1 endpoints. Fractional FILL and custom axes use the variable font when included. This keeps CurveRendering on RHI and QtRendering on software. The application selects the assets it embeds.
+Material uses clean static instances at the default 400/24/GRAD0 and
+FILL0/1. Fractional FILL and custom axes use the variable font when included. This keeps CurveRendering on RHI and QtRendering on software. The application selects the assets it embeds.
+
+For a lighter or heavier icon weight, add `VARIABLE` and set `appearance.weight`
+(for example `350`). On Linux (FreeType) the variable font renders every inner
+detail, and at wght400 it matches the static instance pixel for pixel. On macOS,
+Qt's default CoreText font engine can drop small inner contours of the variable
+font at small sizes, such as the "i" in `info` at 20 px; the static instances are
+not affected. For a faithful macOS preview, run the application with
+`-platform cocoa:fontengine=freetype`.
 
 The committed source assets need no generator at build/runtime; subset builds use fontTools. To regenerate from the
 pinned upstream source:

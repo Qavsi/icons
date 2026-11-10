@@ -50,13 +50,21 @@ same pinned font, with overlapping contours removed and unique family names.
 This avoids cracks in Qt 6.12 Metal text rendering without changing CurveRendering
 or its software QtRendering fallback. Fractional FILL and custom axes use the original variable font when packaged. Core/package routing and caller appearance remain
 unchanged. Applications choose the embedded assets.
+Non-default weights come from the variable font, not from extra static instances.
+Measured at 20 px with the software backend, Qt 6.8.3 and 6.12.0 on Linux
+(FreeType) render the variable font with every inner contour, identical to the
+static instance at wght400 and to a baked wght350 instance. Only Qt's macOS
+CoreText engine drops small inner contours of the variable font at small sizes,
+so the defect is in that engine, not the font; macOS previews use
+`-platform cocoa:fontengine=freetype`. Extra static weights would add assets and a
+build-time skia-pathops dependency to work around a desktop-only Qt defect.
 `fonts/instances.json` records hashes, axes, tools and verified catalog coverage;
 `tools/generate-material-instances.py` is offline asset preparation, not a build
 or runtime dependency.
 
 
 Applications call `qavsi_icons_add_material_fonts(target ICONS names... [VARIABLE])`
-or use `ALL` in place of `ICONS`. Both static endpoints are always added;
+or use `ALL` in place of `ICONS`. Both static instances are always added;
 `VARIABLE` additionally packages the variable font. ICONS generates font subsets
 at build time using Python 3 and fontTools and drops GSUB; ALL copies unchanged
 fonts without Python. Unknown names and keywords fail at configure time. The

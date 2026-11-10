@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Enes Alp
 # SPDX-License-Identifier: MIT
-"""Prepare default Material endpoints; not required by CMake or at runtime."""
+"""Prepare default Material static instances; not required by CMake or at runtime."""
 import hashlib
 import json
 from pathlib import Path
@@ -49,7 +49,7 @@ def main():
             if any(cp not in cmap or check.getGlyphID(cmap[cp]) == 0 for cp in catalog):
                 raise ValueError("Generated instance lost catalog coverage")
             if "fvar" in check:
-                raise ValueError("Endpoint must be a full static instance")
+                raise ValueError("Static instance must have no fvar table")
         records.append({"file": output.name, "family": family, "axes": axes,
                         "sha256": digest(output), "bytes": output.stat().st_size,
                         "verifiedCatalogNames": len(catalog)})
